@@ -1,0 +1,31 @@
+
+<h2 mat-dialog-title>Add Exercise</h2>
+<mat-dialog-content style="display:flex;flex-direction:column;align-items:flex-start">
+
+  <mat-form-field>
+    <input matInput type="text" placeholder="Exercise Name" #exerciseName>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Category</mat-label>
+    <mat-select #exerciseCategory>
+      @for (category of categories; track $index){
+      <mat-option [value]="category">{{getCategoryLabel(category)}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Muscle Group</mat-label>
+    <mat-select #exerciseGroup>
+      @for (muscleGroup of muscleGroups; track $index){
+      <mat-option [value]="muscleGroup">{{getMuscleGroupLabel(muscleGroup)}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="{name: exerciseName.value,category: exerciseCategory.value,group:exerciseGroup.value}">Save</button>
+</mat-dialog-actions>
