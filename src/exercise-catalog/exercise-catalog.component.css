@@ -4,4 +4,6 @@ table {
 
 .table-actions{
   display:flex;
+  padding-bottom: 5px;
+  padding-top:2px;
 }

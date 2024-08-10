@@ -8,6 +8,8 @@ import {SelectionModel} from "@angular/cdk/collections";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatButton} from "@angular/material/button";
 import {Category, MuscleGroup} from "../exercise-enums";
+import {catchError, map, retry, throwError} from "rxjs";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-exercise-catalog',
@@ -17,15 +19,34 @@ import {Category, MuscleGroup} from "../exercise-enums";
   styleUrl: './exercise-catalog.component.css',
 })
 export class ExerciseCatalogComponent {
+  constructor() {
+    this.getExercises();
+  }
+
   private service = inject(ExerciseService)
-  dataSource = new MatTableDataSource<Exercise>(this.service.getExerciseList());
-  displayedColumns: string[] = ["name","category","group","select"];
+  private exerciseList:Exercise[] = [];
+  dataSource = new MatTableDataSource<Exercise>([]);
+  displayedColumns: string[] = ["name","primary","secondary","shortVideo"];
   selection = new SelectionModel<Exercise>(true, []);
+
 
   hasUpdated(result: boolean){
     if(result){
-      this.dataSource.data = this.service.getExerciseList();
+      this.getExercises();
     }
+  }
+
+  getExercises(){
+    this.service.getExerciseList().pipe(
+        retry(3),
+        catchError(this.handleHttpError),
+      ).subscribe(
+        data => {
+          console.log(data);
+          this.dataSource.data = data;
+        },
+        error => console.log(error),
+      );
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -44,7 +65,7 @@ export class ExerciseCatalogComponent {
 
   deleteSelected(){
     for(let item of this.selection.selected){
-      console.log(item.name);
+      console.log(item.exercise);
     }
   }
 
@@ -54,6 +75,17 @@ export class ExerciseCatalogComponent {
 
   getMuscleGroupLabel(option:number){
     return MuscleGroup[option];
+  }
+
+  private handleHttpError(error: HttpErrorResponse){
+    if (error.status === 0){
+      console.error("An error occured:",error.error);
+    }
+    else{
+      console.error('Backend returned code ${error.status}, body was: ',error.error);
+    }
+
+    return throwError(() => new Error("Something bad happend; please try again later"));
   }
 
 

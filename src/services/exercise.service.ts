@@ -1,35 +1,31 @@
 import {EventEmitter, Injectable, Output} from '@angular/core';
 import {Exercise} from "../exercise";
 import { MuscleGroup, Category } from "../exercise-enums";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {catchError, map, Observable, retry, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-  private exerciseList: Exercise[]
+  private exerciseList: Exercise[];
+  private hasUpdated: boolean;
 
-  constructor() {
-    this.exerciseList = this.setExercistList();
+  constructor(private http: HttpClient) {
+    this.exerciseList = [];
+    this.hasUpdated = false;
   }
-  private setExercistList(){
-    return [{name:"Bicep Curls",category:Category.Upper,group:MuscleGroup.Biceps}]
-  }
+
 
   private setPrettyList(){
-    let l = []
-
-    for(let e of this.exerciseList) {
-      l.push({name:e.name,category:Category[e.category],group:MuscleGroup[e.group]});
-    }
-    return l;
   }
 
   public removeExercise(id:number){
 
   }
 
-  public getExerciseList(){
-    return this.exerciseList
+  public getExerciseList(init:boolean=false){
+    return this.http.get<Exercise[]>("http://localhost:8000/");
   }
 
   public getExerciseCategories(){
@@ -55,8 +51,9 @@ export class ExerciseService {
   }
 
   public addExercise(newExercise:Exercise){
-    this.exerciseList.push({name:newExercise.name,category:newExercise.category,group:newExercise.group});
+    //this.exerciseList.push({name:newExercise.name,category:newExercise.category,group:newExercise.group});
   }
+
 }
 
 

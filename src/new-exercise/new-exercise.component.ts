@@ -41,7 +41,7 @@ export class AddNewExerciseButton {
     dialogRef.afterClosed().subscribe(result => {
       if(result) {
         console.log(result);
-        this.service.addExercise({name: result.name, category: result.category, group: result.group});
+        this.service.addExercise({exercise: result.name});
         this.newExerciseEvent.emit(true);
       }
       this.newExerciseEvent.emit(false);
