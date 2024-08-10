@@ -24,9 +24,9 @@ async def root():
     return db_helper.get_exercise_catalog()
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@app.get("/exerciseById/{id}")
+async def say_hello(id: int):
+    return db_helper.get_exercise_by_id(id)
 
 
 if __name__ == "__main__":

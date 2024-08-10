@@ -1,6 +1,12 @@
 <div class="table-actions">
   <new-exercise (newExerciseEvent)="hasUpdated($event)"></new-exercise>
-  <button mat-raised-button (click)="deleteSelected()">Delete Selected</button>
+<!--  <button mat-raised-button (click)="deleteSelected()">Delete Selected</button>-->
+  <input style="align-content: center; width:25%;"
+         (input)="onSearch($event)"
+         type="text"
+         id="searchTextField"
+         placeholder="Search">
+
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

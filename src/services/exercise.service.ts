@@ -24,8 +24,26 @@ export class ExerciseService {
 
   }
 
+  public setExerciseList(exList:Exercise[]){
+    this.exerciseList = exList;
+  }
+
   public getExerciseList(init:boolean=false){
-    return this.http.get<Exercise[]>("http://localhost:8000/");
+    if(this.hasUpdated || init){
+      return this.http.get<Exercise[]>("http://localhost:8000/");
+    }
+    else{
+      return this.exerciseList;
+    }
+  }
+  public getExerciseById(id: number){
+    if(this.hasUpdated || this.exerciseList.length == 0){
+      console.log(`http://localhost:8000/exerciseById/${id}`);
+      return this.http.get<Exercise>(`http://localhost:8000/exerciseById/${id}`)
+    }
+    else{
+      return this.exerciseList[id];
+    }
   }
 
   public getExerciseCategories(){

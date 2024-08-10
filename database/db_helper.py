@@ -57,6 +57,22 @@ def get_exercise_catalog():
   else:
     return False
 
+def get_exercise_by_id(id:int):
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = f'''SELECT row_to_json(t) FROM (SELECT * FROM public.exercises WHERE exercise_id={id}) t'''
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    return results[0][0]
+
+  else:
+    return False
+
 def load_table():
   try:
     conn = psycopg2.connect(database=DB_NAME,
