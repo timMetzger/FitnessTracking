@@ -2,7 +2,7 @@ import {Component, EventEmitter, inject, OnDestroy, OnInit, Output, ViewChild} f
 import {Exercise} from "../exercise";
 import {AddNewExerciseButton} from "../new-exercise/new-exercise.component";
 import {NgForOf} from "@angular/common";
-import { ExerciseService } from "../services/exercise.service";
+import { FitnessTracker } from "../services/fitness-tracker";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatCheckbox} from "@angular/material/checkbox";
@@ -25,8 +25,7 @@ export class ExerciseCatalogComponent implements OnDestroy{
   private searchInput = new Subject<string>();
   private readonly debounceTimeMs = 250;
 
-  private service = inject(ExerciseService)
-  private exerciseList:Exercise[] = [];
+  private service = inject(FitnessTracker)
 
   dataSource = new MatTableDataSource<Exercise>([]);
   displayedColumns: string[] = ["name","primary","secondary","shortVideo"];
@@ -82,26 +81,6 @@ export class ExerciseCatalogComponent implements OnDestroy{
       this.dataSource.data = req;
     }
 
-  }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
-  deleteSelected(){
-    for(let item of this.selection.selected){
-      console.log(item.exercise);
-    }
   }
 
 

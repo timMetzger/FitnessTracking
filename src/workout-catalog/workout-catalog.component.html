@@ -1,0 +1,71 @@
+<div class="table-actions">
+  <new-workout (newWorkoutEvent)="hasUpdated($event)"></new-workout>
+  <input style="align-content: center; width:25%;"
+         (input)="onSearch($event)"
+         type="text"
+         id="searchTextField"
+         placeholder="Search">
+
+</div>
+
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <!-- Type Column -->
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef> Workout Type </th>
+    <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+  </ng-container>
+
+  <!-- Last Completed -->
+  <ng-container matColumnDef="last_completed">
+    <th mat-header-cell *matHeaderCellDef> Last Completed </th>
+    <td mat-cell *matCellDef="let element"> {{element.last_completed}} </td>
+  </ng-container>
+
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+      <div class="workout-detail"
+           [@detailExpand]="element == expandedWorkout ? 'expanded' : 'collapsed'">
+        <mat-grid-list cols="5" rowHeight="2:1">
+
+          <mat-grid-tile class="workout-row-header">Exercise</mat-grid-tile>
+          <mat-grid-tile class="workout-row-header">Rest</mat-grid-tile>
+          <mat-grid-tile class="workout-row-header">Reps</mat-grid-tile>
+          <mat-grid-tile class="workout-row-header">Tempo</mat-grid-tile>
+          <mat-grid-tile class="workout-row-header">Sets</mat-grid-tile>
+
+
+          @for(display of displayWorkout(element);track $index){
+<!--              <mat-grid-tile class="superset-edge"> {{display}} </mat-grid-tile>-->
+              <mat-grid-tile> {{display}} </mat-grid-tile>
+
+          }
+
+        </mat-grid-list>
+
+
+
+
+
+      </div>
+    </td>
+  </ng-container>
+
+
+
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+      class="workout-row"
+      [class.expanded-row]="expandedWorkout === element"
+      (click)="expandedWorkout = expandedWorkout === element ? null : element">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+</table>

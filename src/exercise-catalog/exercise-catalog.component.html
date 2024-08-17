@@ -1,6 +1,5 @@
 <div class="table-actions">
   <new-exercise (newExerciseEvent)="hasUpdated($event)"></new-exercise>
-<!--  <button mat-raised-button (click)="deleteSelected()">Delete Selected</button>-->
   <input style="align-content: center; width:25%;"
          (input)="onSearch($event)"
          type="text"
@@ -34,21 +33,6 @@
     <td mat-cell *matCellDef="let element"> <a href="{{element.short_video}}">link</a> </td>
   </ng-container>
 
-<!--  &lt;!&ndash; Checkbox Column &ndash;&gt;-->
-<!--  <ng-container matColumnDef="select">-->
-<!--    <th mat-header-cell *matHeaderCellDef>-->
-<!--      <mat-checkbox (change)="$event ? masterToggle() : null"-->
-<!--                    [checked]="selection.hasValue() && isAllSelected()"-->
-<!--                    [indeterminate]="selection.hasValue() && !isAllSelected()">-->
-<!--      </mat-checkbox>-->
-<!--    </th>-->
-<!--    <td mat-cell *matCellDef="let row">-->
-<!--      <mat-checkbox (click)="$event.stopPropagation()"-->
-<!--                    (change)="$event ? selection.toggle(row) : null"-->
-<!--                    [checked]="selection.isSelected(row)">-->
-<!--      </mat-checkbox>-->
-<!--    </td>-->
-<!--  </ng-container>-->
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"

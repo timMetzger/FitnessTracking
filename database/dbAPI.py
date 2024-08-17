@@ -19,13 +19,17 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
+@app.get("/exerciseList")
+async def exerciseList():
     return db_helper.get_exercise_catalog()
+
+@app.get("/workoutList")
+async def workoutList():
+  return db_helper.get_workout_catalog()
 
 
 @app.get("/exerciseById/{id}")
-async def say_hello(id: int):
+async def exByID(id: int):
     return db_helper.get_exercise_by_id(id)
 
 

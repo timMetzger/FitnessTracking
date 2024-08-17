@@ -41,6 +41,22 @@ def establish_connection():
   finally:
     return conn
 
+def get_workout_catalog():
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = '''SELECT json_strip_nulls(json_agg(t)) FROM (SELECT * FROM public.workouts) t'''
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    return results[0][0]
+
+  else:
+    return False
+
 def get_exercise_catalog():
   conn = establish_connection()
   if conn is not None:
@@ -109,8 +125,6 @@ def load_table():
 
     conn.commit()
     conn.close()
-
-
 
 
 

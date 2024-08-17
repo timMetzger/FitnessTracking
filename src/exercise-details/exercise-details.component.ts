@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap} from "@angular/router";
 import { switchMap } from 'rxjs/operators'
-import {ExerciseService} from "../services/exercise.service";
+import {FitnessTracker} from "../services/fitness-tracker";
 import {Exercise} from "../exercise";
 import {catchError, Observable, retry, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -18,7 +18,7 @@ export class ExerciseDetailsComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private service: ExerciseService
+    private service: FitnessTracker
   ){
     this.exercise = {exercise:"NONE"};
     this.getExercise(10);

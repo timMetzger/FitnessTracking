@@ -19,32 +19,33 @@ import {FormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {FitnessTracker} from "../services/fitness-tracker";
 import {Category, MuscleGroup} from "../exercise-enums";
+import {Workout} from "../workout";
 
 /**
  * @title Dialog Animations
  */
 @Component({
-  selector: 'new-exercise',
-  styleUrl: 'new-exercise.component.css',
-  templateUrl: 'new-exercise-button-dialog.component.html',
+  selector: 'new-workout',
+  styleUrl: 'new-workout.component.css',
+  templateUrl: 'new-workout-button-dialog.component.html',
   standalone: true,
   imports: [MatButtonModule],
 })
-export class AddNewExerciseButton {
+export class AddNewWorkoutButton {
   constructor(public dialog: MatDialog) {}
 
   private service = inject(FitnessTracker);
-  @Output() newExerciseEvent = new EventEmitter<boolean>();
+  @Output() newWorkoutEvent = new EventEmitter<boolean>();
 
   openDialog(){
-    const dialogRef = this.dialog.open(NewExerciseDialog,{});
+    const dialogRef = this.dialog.open(NewWorkoutDialog,{});
     dialogRef.afterClosed().subscribe(result => {
       if(result) {
         console.log(result);
-        this.service.addExercise({exercise: result.name});
-        this.newExerciseEvent.emit(true);
+        this.service.addWorkout({name: result.name,type:"N/A",exercise_names:["a"],superset_count:1});
+        this.newWorkoutEvent.emit(true);
       }
-      this.newExerciseEvent.emit(false);
+      this.newWorkoutEvent.emit(false);
     })
   }
 
@@ -52,8 +53,8 @@ export class AddNewExerciseButton {
 }
 
 @Component({
-  selector: 'new_exercise_dialog',
-  templateUrl: 'new-exercise.component.html',
+  selector: 'new_workout_dialog',
+  templateUrl: 'new-workout.component.html',
   standalone: true,
   imports: [
     MatButtonModule,
@@ -74,17 +75,8 @@ export class AddNewExerciseButton {
     MatInputModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewExerciseDialog {
+export class NewWorkoutDialog {
   private service = inject(FitnessTracker);
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Exercise){}
-
-  getCategoryLabel(option:number){
-    return Category[option];
-  }
-
-  getMuscleGroupLabel(option:number){
-    return MuscleGroup[option];
-  }
-
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Workout){}
 
 }
