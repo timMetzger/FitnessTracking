@@ -2,7 +2,11 @@ export interface Workout {
   id ?: number;
   name : string,
   type ?: string,
+  created_by ?: string;
+  created_on ?: number;
+  last_completed ?: number;
   exercise_names : string[],
+  exercise_ids ?: number[],
   superset_count : number,
 
   warmup ?: number[]
@@ -82,7 +86,7 @@ export interface Workout {
   sets_10 ?: string[],
   special_notes_10 ?: string[],
 
-  last_completed ?: number;
+
 
 
 

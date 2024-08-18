@@ -33,12 +33,12 @@ export class WorkoutCatalogComponent implements OnDestroy{
   private searchInput = new Subject<string>();
   private readonly debounceTimeMs = 250;
   public expandedWorkout = null;
+  public supersetColor = "warmup-block";
 
   private service = inject(FitnessTracker)
 
   dataSource = new MatTableDataSource<Workout>([]);
-  displayedColumns: string[] = ["name","type","last_completed"];
-  detailColumns: string[] = ["name"]
+  displayedColumns: string[] = ["name","type","last_completed","createdBy","createdOn"];
 
 
   constructor() {
@@ -94,180 +94,27 @@ export class WorkoutCatalogComponent implements OnDestroy{
 
   }
 
-  public displayWorkout(workout:Workout) {
-    let results = [];
-    let i = 0;
-    let nameIdx = 0;
-
-
-    if ("warmup" in workout) {
-      //results.push("WARMUP");TODO
-      while (i < (workout.warmup ? workout.warmup.length : -1)) {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_warm ? workout.rest_warm[i] : -1);
-        results.push(workout.reps_warm ? workout.reps_warm[i] : -1);
-        results.push(workout.tempo_warm ? workout.tempo_warm[i] : -1);
-        results.push(workout.sets_warm ? workout.sets_warm[i] : -1);
-        nameIdx++;
-        i++;
-      }
-      //results.push("END WARMUP");
+  public setColor(s:string){
+    if(s == "WARMUP" || s == "END WARMUP"){
+      this.supersetColor = "#fd934d";
     }
-
-    if ("superset_1" in workout) {
-      let n = workout.superset_1 ? workout.superset_1.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_1? workout.rest_1[i] : -1);
-        console.log(workout.rest_1? workout.rest_1[i] : -1);
-        results.push(workout.reps_1? workout.reps_1[i] : -1);
-        results.push(workout.tempo_1? workout.tempo_1[i] : -1);
-        results.push(workout.sets_1? workout.sets_1[i] : -1);
-      }
-      nameIdx++;
+    else{
+      this.supersetColor = "#ffb888";
+    }
   }
 
-
-    if ("superset_2" in workout) {
-      let n = workout.superset_2 ? workout.superset_2.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_2? workout.rest_2[i] : -1);
-        console.log(workout.rest_2? workout.rest_2[i] : -1);
-        results.push(workout.reps_2? workout.reps_2[i] : -1);
-        results.push(workout.tempo_2? workout.tempo_2[i] : -1);
-        results.push(workout.sets_2? workout.sets_2[i] : -1);
+  // TODO: if user clicked on a exercise name take them to the exercise page
+  public highlight(clicked:string){
+    if(clicked){
+      if(this.expandedWorkout){
+        let workout: Workout = this.expandedWorkout as Workout;
+        let idx = workout.exercise_names.indexOf(clicked.trim());
       }
-      nameIdx++;
     }
+  }
 
-    if ("superset_3" in workout) {
-      let n = workout.superset_3 ? workout.superset_3.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_3? workout.rest_3[i] : -1);
-        console.log(workout.rest_3? workout.rest_3[i] : -1);
-        results.push(workout.reps_3? workout.reps_3[i] : -1);
-        results.push(workout.tempo_3? workout.tempo_3[i] : -1);
-        results.push(workout.sets_3? workout.sets_3[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_4" in workout) {
-      let n = workout.superset_4 ? workout.superset_4.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_4? workout.rest_4[i] : -1);
-        console.log(workout.rest_4? workout.rest_4[i] : -1);
-        results.push(workout.reps_4? workout.reps_4[i] : -1);
-        results.push(workout.tempo_4? workout.tempo_4[i] : -1);
-        results.push(workout.sets_4? workout.sets_4[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_5" in workout) {
-      let n = workout.superset_5 ? workout.superset_5.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_5? workout.rest_5[i] : -1);
-        console.log(workout.rest_5? workout.rest_5[i] : -1);
-        results.push(workout.reps_5? workout.reps_5[i] : -1);
-        results.push(workout.tempo_5? workout.tempo_5[i] : -1);
-        results.push(workout.sets_5? workout.sets_5[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_6" in workout) {
-      let n = workout.superset_6 ? workout.superset_6.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_6? workout.rest_6[i] : -1);
-        console.log(workout.rest_6? workout.rest_6[i] : -1);
-        results.push(workout.reps_6? workout.reps_6[i] : -1);
-        results.push(workout.tempo_6? workout.tempo_6[i] : -1);
-        results.push(workout.sets_6? workout.sets_6[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_7" in workout) {
-      let n = workout.superset_7 ? workout.superset_7.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_7? workout.rest_7[i] : -1);
-        console.log(workout.rest_7? workout.rest_7[i] : -1);
-        results.push(workout.reps_7? workout.reps_7[i] : -1);
-        results.push(workout.tempo_7? workout.tempo_7[i] : -1);
-        results.push(workout.sets_7? workout.sets_7[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_8" in workout) {
-      let n = workout.superset_8 ? workout.superset_8.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_8? workout.rest_8[i] : -1);
-        console.log(workout.rest_8? workout.rest_8[i] : -1);
-        results.push(workout.reps_8? workout.reps_8[i] : -1);
-        results.push(workout.tempo_8? workout.tempo_8[i] : -1);
-        results.push(workout.sets_8? workout.sets_8[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_9" in workout) {
-      let n = workout.superset_9 ? workout.superset_9.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_9? workout.rest_9[i] : -1);
-        console.log(workout.rest_9? workout.rest_9[i] : -1);
-        results.push(workout.reps_9? workout.reps_9[i] : -1);
-        results.push(workout.tempo_9? workout.tempo_9[i] : -1);
-        results.push(workout.sets_9? workout.sets_9[i] : -1);
-      }
-      nameIdx++;
-    }
-
-    if ("superset_10" in workout) {
-      let n = workout.superset_10 ? workout.superset_10.length : -1;
-
-      for (let i = 0; i < n; i++)
-      {
-        results.push(workout.exercise_names[nameIdx]);
-        results.push(workout.rest_10? workout.rest_10[i] : -1);
-        console.log(workout.rest_10? workout.rest_10[i] : -1);
-        results.push(workout.reps_10? workout.reps_10[i] : -1);
-        results.push(workout.tempo_10? workout.tempo_10[i] : -1);
-        results.push(workout.sets_10? workout.sets_10[i] : -1);
-      }
-      nameIdx++;
-    }
-
-
-    console.log(results);
-    return results;
+  public displayWorkout(workout:Workout) {
+    return this.service.workoutIterativeForm(workout);
   }
 
   private handleHttpError(error: HttpErrorResponse){
