@@ -1,12 +1,112 @@
 <h2 mat-dialog-title>Workout Builder</h2>
-<mat-dialog-content style="display:flex;flex-direction:column;align-items:flex-start">
+<mat-dialog-content>
 
-  <mat-form-field>
-    <input matInput type="text" placeholder="Workout Name" #workoutName>
-  </mat-form-field>
+
+  <mat-grid-list cols="6" rowHeight="3:1">
+    <mat-grid-tile [colspan]="1">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Workout Name" #workoutName>
+      </mat-form-field>
+    </mat-grid-tile>
+
+
+    <mat-grid-tile [colspan]="1">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Created By" #createdBy>
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="4"></mat-grid-tile>
+
+
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Exercise</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Rest</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Reps</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Tempo</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Sets</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Special Notes</mat-grid-tile>
+  </mat-grid-list>
+  <hr style="clear:both;visibility:hidden">
+
+  <mat-grid-list cols="6" rowHeight="3:1">
+  @for(item of [].constructor(6);track item){
+    <mat-grid-tile style="text-align:right">
+      <mat-form-field style="width:98%;height:98%;text-align:right">
+        <input matInput style="width:98%;height:98%" type="text" placeholder="">
+      </mat-form-field>
+    </mat-grid-tile>
+  }
+  </mat-grid-list>
+<!--  <mat-grid-list cols="8" rowHeight="2:1">-->
+<!--    <mat-grid-tile [colspan]="6" [rowspan]="10">-->
+
+<!--      <div style="display:flex;flex-direction:column;align-items:flex-start">-->
+<!--        <mat-form-field>-->
+<!--          <input matInput type="text" placeholder="Workout Name" #workoutName>-->
+<!--        </mat-form-field>-->
+
+<!--        <mat-form-field>-->
+<!--          <input matInput type="text" placeholder="Created By" #createdBy>-->
+<!--        </mat-form-field>-->
+
+<!--        <mat-grid-list cols="6" rowHeight="3:1">-->
+<!--        @for(item of [].constructor(supersetCount);track item;let i = $index){-->
+<!--          @if(i == 0){-->
+<!--              <mat-grid-tile class="workout-row-header">Exercise</mat-grid-tile>-->
+<!--              <mat-grid-tile class="workout-row-header">Rest</mat-grid-tile>-->
+<!--              <mat-grid-tile class="workout-row-header">Reps</mat-grid-tile>-->
+<!--              <mat-grid-tile class="workout-row-header">Tempo</mat-grid-tile>-->
+<!--              <mat-grid-tile class="workout-row-header">Sets</mat-grid-tile>-->
+<!--              <mat-grid-tile class="workout-row-header">Special Notes</mat-grid-tile>-->
+<!--              <hr>-->
+<!--            }-->
+<!--          <h2>Superset #{{i}}</h2>-->
+<!--&lt;!&ndash;          <div cdkDropListGroup&ndash;&gt;-->
+<!--&lt;!&ndash;               [cdkDropListData]="supersets"&ndash;&gt;-->
+<!--&lt;!&ndash;               (cdkDropListDropped) = "drop($event)">&ndash;&gt;-->
+<!--&lt;!&ndash;               @for(ex of supersets[i];track item){&ndash;&gt;-->
+<!--&lt;!&ndash;                  <div cdkDrag>{{ex.name}}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                }&ndash;&gt;-->
+<!--&lt;!&ndash;         </div>&ndash;&gt;-->
+
+
+<!--        }-->
+<!--        </mat-grid-list>-->
+<!--      </div>-->
+
+
+
+<!--    </mat-grid-tile>-->
+
+<!--&lt;!&ndash;    Pending Exercises &ndash;&gt;-->
+<!--    <mat-grid-tile [colspan]="2" [rowspan]="10" class="pending-ex-group">-->
+<!--      <div cdkDropListGroup>-->
+<!--        <h2>Tabled Exercises</h2>-->
+<!--        <div cdkDropList-->
+<!--             [cdkDropListData]="pendingExercises"-->
+<!--             class="pending-exercises"-->
+<!--             (cdkDropListDropped) = "drop($event)">-->
+
+<!--          @for(ex of pendingExercises;track ex){-->
+<!--            <div cdkDrag>{{ex.name}}</div>-->
+<!--          }-->
+
+
+<!--        </div>-->
+<!--      </div>-->
+<!--    </mat-grid-tile>-->
+
+
+<!--  </mat-grid-list>-->
+
+
+
+
 
 </mat-dialog-content>
+
 <mat-dialog-actions>
+  <button mat-raised-button (click)="addSuperset()">Add Superset</button>
   <button mat-button mat-dialog-close>Cancel</button>
   <button mat-button [mat-dialog-close]="{name: workoutName.value}">Save</button>
 </mat-dialog-actions>

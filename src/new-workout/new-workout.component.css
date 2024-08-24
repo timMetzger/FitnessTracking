@@ -6,3 +6,8 @@ button {
   flex-direction: row;
   align-items: flex-start;
 }
+
+.pending-ex-group{
+  background:gray;
+}
+

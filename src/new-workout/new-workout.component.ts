@@ -20,6 +20,18 @@ import {MatInputModule} from "@angular/material/input";
 import {FitnessTracker} from "../services/fitness-tracker";
 import {Category, MuscleGroup} from "../exercise-enums";
 import {Workout} from "../workout";
+import {CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
+
+
+export interface BasicEx{
+  name:string,
+  rest:string,
+  reps:string,
+  tempo:string,
+  sets:string,
+  special_notes:string,
+}
+
 
 /**
  * @title Dialog Animations
@@ -38,7 +50,10 @@ export class AddNewWorkoutButton {
   @Output() newWorkoutEvent = new EventEmitter<boolean>();
 
   openDialog(){
-    const dialogRef = this.dialog.open(NewWorkoutDialog,{});
+    const dialogRef = this.dialog.open(NewWorkoutDialog,{
+      width:'80%',
+      height:'80%',
+    });
     dialogRef.afterClosed().subscribe(result => {
       if(result) {
         console.log(result);
@@ -56,27 +71,40 @@ export class AddNewWorkoutButton {
   selector: 'new_workout_dialog',
   templateUrl: 'new-workout.component.html',
   standalone: true,
-  imports: [
-    MatButtonModule,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    MatGridList,
-    MatGridTile,
-    MatLabel,
-    MatHint,
-    MatFormField,
-    MatOption,
-    MatSelect,
-    FormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule],
+    imports: [
+        MatButtonModule,
+        MatDialogActions,
+        MatDialogClose,
+        MatDialogTitle,
+        MatDialogContent,
+        MatGridList,
+        MatGridTile,
+        MatLabel,
+        MatHint,
+        MatFormField,
+        MatOption,
+        MatSelect,
+        FormsModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        CdkDropList
+    ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewWorkoutDialog {
   private service = inject(FitnessTracker);
+  public pendingExercises: BasicEx[] = [{name:"press",rest:"",sets:"",reps:"",tempo:"",special_notes:""}];
+  public supersets: BasicEx[][] = [];
+  public supersetCount:number = 1;
   constructor(@Inject(MAT_DIALOG_DATA) public data: Workout){}
+
+  addSuperset(){
+    this.supersetCount++;
+  }
+
+  drop(event:any){
+    console.log(event);
+  }
 
 }

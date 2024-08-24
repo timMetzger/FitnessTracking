@@ -11,7 +11,7 @@ import {catchError, debounceTime, map, Observable, retry, Subject, throwError} f
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatFormField, MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import {MatGridList, MatGridTile, MatGridListModule} from "@angular/material/grid-list";
 import {Workout} from "../workout";
 import {AddNewWorkoutButton} from "../new-workout/new-workout.component";
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -20,7 +20,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 @Component({
   selector: 'app-workout-catalog',
   standalone: true,
-  imports: [AddNewWorkoutButton, NgForOf, MatTableModule, MatCheckbox, MatButton, MatFormFieldModule, MatInputModule, MatGridList, MatGridTile],
+  imports: [AddNewWorkoutButton, NgForOf, MatTableModule, MatCheckbox, MatButton, MatFormFieldModule, MatInputModule, MatGridList, MatGridTile, MatGridListModule],
   templateUrl: './workout-catalog.component.html',
   styleUrl: './workout-catalog.component.css',
   animations: [
@@ -105,6 +105,7 @@ export class WorkoutCatalogComponent implements OnDestroy{
 
   // TODO: if user clicked on a exercise name take them to the exercise page
   public highlight(clicked:string){
+    console.log(clicked);
     if(clicked){
       if(this.expandedWorkout){
         let workout: Workout = this.expandedWorkout as Workout;
