@@ -46,7 +46,7 @@
   </mat-grid-list>
 
   <mat-grid-list cols="6" rowHeight="3:1">
-  @for(k of [].constructor(warmupExCount);track k){
+  @for(k of [].constructor(warmupExCount);track k;let exIdx = $index){
     @for(item of [].constructor(6);track item;let i = $index){
     <mat-grid-tile style="text-align:right">
       <mat-form-field style="width:99%;height:100%;text-align:right">
@@ -55,17 +55,34 @@
                placeholder="Exercise"
                aria-label="Exercise"
                matInput
-               [formControl]="myControl"
-               [matAutocomplete]="auto">
+               [matAutocomplete]="auto"
+               (ngModelChange)="doFilter($event)"
+               [(ngModel)]="warmup[exIdx].name">
         <mat-autocomplete #auto="matAutocomplete">
-          @for(ex of exList;track ex){
-        <mat-option [value]="ex.exercise">{{ex.exercise}}</mat-option>
-        }
+          @for(ex of filteredOptions;track ex){
+            <mat-option [value]="ex.exercise" style="font-size:15px">{{ex.exercise}}</mat-option>
+          }
         </mat-autocomplete>
         }
-        @else{
-        <input matInput style="width:99%;height:100%" type="text" placeholder="">
+        @else if (i == 1){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="warmup[exIdx].rest">
         }
+        @else if (i == 2){
+        <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="warmup[exIdx].reps">
+        }
+        @else if (i == 3){
+        <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="warmup[exIdx].tempo">
+        }
+        @else if (i == 4){
+        <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="warmup[exIdx].sets">
+        }
+        @else if (i == 5){
+        <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="warmup[exIdx].special_notes">
+        }
+        @else{
+          <h2>You shouldn't be here</h2>
+        }
+
 
       </mat-form-field>
     </mat-grid-tile>
@@ -75,7 +92,7 @@
 
 
 <!--  Supersets  -->
-  @for(item of [].constructor(supersetCount);track item;let i = $index){
+  @for(item of [].constructor(supersets.length);track item;let i = $index){
   <mat-grid-list cols="6" rowHeight="5:1">
   <mat-grid-tile>
       <div style="width:100%;display:flex;flex-direction:row;align-items: center">
@@ -85,34 +102,50 @@
 
     <mat-grid-tile [colspan]="3"></mat-grid-tile>
     <mat-grid-tile [colspan]="1">
-        <button mat-raised-button style="width:95%;height:50%;align-content:center;" (click)="removeEx()">Remove Exercise</button>
+        <button mat-raised-button style="width:95%;height:50%;align-content:center;" (click)="removeEx(i)">Remove Exercise</button>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1">
-      <button mat-raised-button style="width:100%;height:50%;align-content:center;" (click)="addEx()">Add Exercise</button>
+      <button mat-raised-button style="width:100%;height:50%;align-content:center;" (click)="addEx(i)">Add Exercise</button>
     </mat-grid-tile>
     </mat-grid-list>
 
     <mat-grid-list cols="6" rowHeight="3:1">
-    @for(k of [].constructor(superset1ExCount);track k){
-      @for(item of [].constructor(6);track item;let i = $index){
+    @for(k of [].constructor(supersetCounts[i]);track k;let exIdx = $index){
+      @for(item of [].constructor(6);track item;let j = $index){
       <mat-grid-tile style="text-align:right">
         <mat-form-field style="width:99%;height:100%;text-align:right">
-          @if(i == 0){
-      <input type="text"
-             placeholder="Exercise"
-             aria-label="Exercise"
-             matInput
-             [formControl]="myControl"
-             [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete">
-        @for(ex of exList;track ex){
-        <mat-option [value]="ex.exercise">{{ex.exercise}}</mat-option>
-        }
-      </mat-autocomplete>
-      }
-      @else{
-      <input matInput style="width:99%;height:100%" type="text" placeholder="">
-      }
+        @if(j == 0){
+          <input type="text"
+                 placeholder="Exercise"
+                 aria-label="Exercise"
+                 matInput
+                 [matAutocomplete]="auto"
+                 [(ngModel)]="supersets[i][exIdx].name"
+                 (ngModelChange)="doFilter($event)">
+          <mat-autocomplete #auto="matAutocomplete">
+            @for(ex of filteredOptions;track ex){
+            <mat-option [value]="ex.exercise" style="font-size:15px">{{ex.exercise}}</mat-option>
+            }
+          </mat-autocomplete>
+          }
+          @else if (j == 1){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="supersets[i][exIdx].rest">
+          }
+          @else if (j == 2){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="supersets[i][exIdx].reps">
+          }
+          @else if (j == 3){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="supersets[i][exIdx].tempo">
+          }
+          @else if (j == 4){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="supersets[i][exIdx].sets">
+          }
+          @else if (j == 5){
+          <input matInput style="width:99%;height:100%" type="text" placeholder="" [(ngModel)]="supersets[i][exIdx].special_notes">
+          }
+          @else{
+          <h2>You shouldn't be here</h2>
+          }
 
       </mat-form-field>
     </mat-grid-tile>
@@ -131,5 +164,5 @@
 <mat-dialog-actions>
   <button mat-raised-button (click)="addSuperset()">Add Superset</button>
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{name: workoutName.value}">Save</button>
+  <button mat-button [mat-dialog-close]="{warmup:warmup,supersets:supersets}">Save</button>
 </mat-dialog-actions>

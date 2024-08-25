@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Inject, inject, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Inject, inject, Input, OnInit, Output} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -19,9 +19,11 @@ import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {FitnessTracker} from "../services/fitness-tracker";
 import {Workout} from "../workout";
-import {catchError, Observable, retry, throwError} from "rxjs";
+import {catchError, Observable, retry, startWith, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatIcon} from "@angular/material/icon";
+import {map} from "rxjs/operators";
+import {AsyncPipe} from "@angular/common";
 
 
 export interface BasicEx{
@@ -52,16 +54,15 @@ export class AddNewWorkoutButton {
 
   openDialog(){
     const dialogRef = this.dialog.open(NewWorkoutDialog,{
-      width:'80%',
-      height:'80%',
+      width:'90%',
+      height:'90%',
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result) {
         console.log(result);
-        this.service.addWorkout({name: result.name,type:"N/A",exercise_names:["a"],superset_count:1});
-        this.newWorkoutEvent.emit(true);
+        //this.newWorkoutEvent.emit(true);
       }
-      this.newWorkoutEvent.emit(false);
+      //#this.newWorkoutEvent.emit(false);
     })
   }
 
@@ -95,11 +96,12 @@ export class AddNewWorkoutButton {
     MatAutocomplete,
     FormsModule,
     MatAutocompleteModule,
-    MatIcon
+    MatIcon,
+    AsyncPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewWorkoutDialog {
+export class NewWorkoutDialog{
   private service = inject(FitnessTracker);
   public warmup: BasicEx[] = [{  name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}]
   public supersets: BasicEx[][] = [[{  name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}]]
@@ -107,21 +109,39 @@ export class NewWorkoutDialog {
   public warmupExCount:number = 1;
   public myControl = new FormControl("");
   public exList: Exercise[] = [];
-  public superset1ExCount = 1;
+
+  public filteredOptions: Exercise[] = this.exList;
+
+  updateWarmup(e:string,idx:number){
+    this.warmup[idx].name = e;
+  }
+  updateSupersetEx(e:string,idx:number,set:number){
+    this.supersets[set][idx].name = e;
+  }
+
+  doFilter(search:string){
+    search = search + "";
+    if(!search){
+      this.filteredOptions = this.exList;
+    }
+    else{
+      this.filteredOptions = this.exList.filter(option => option.exercise.toLowerCase().includes(search))
+    }
+  }
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: Workout){
     this.getExercises();
   }
 
-  addSuperset(i:number){
+  addSuperset(){
     this.supersetCounts.push(1);
     this.supersets.push([{name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}])
   }
 
   removeSuperset(){
     if(this.supersetCounts.length > 1){
-      delete this.supersets[-1];
-      delete this.supersetCounts[-1];
+      this.supersets.pop();
+      this.supersetCounts.pop();
     }
   }
 
@@ -130,20 +150,23 @@ export class NewWorkoutDialog {
     this.supersetCounts[i]++;
   }
   removeEx(i:number){
+    console.log(this.supersetCounts);
     if(this.supersetCounts[i] > 1){
-      delete this.supersets[i][-1];
+      this.supersets[i].pop();
       this.supersetCounts[i]--;
     }
+    console.log(this.supersetCounts);
 
   }
 
   addWarmupEx(){
+    this.warmup.push({name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""});
     this.warmupExCount++;
   }
 
   removeWarmupEx(){
     if(this.warmupExCount > 1){
-      delete this.warmup[-1];
+      this.warmup.pop();
       this.warmupExCount--;
     }
 
@@ -161,7 +184,7 @@ export class NewWorkoutDialog {
       ).subscribe(
         data => {
           this.exList = data;
-          this.service.setExerciseList(data)
+          this.filteredOptions = data;
 
         },
         error => console.log(error),
