@@ -31,8 +31,8 @@ export class FitnessTracker {
     this.exerciseListUpdated = false;
   }
 
-  public getExerciseList(init:boolean){
-    if(this.exerciseListUpdated || init){
+  public getExerciseList(){
+    if(this.exerciseListUpdated || this.exerciseList.length == 0){
       return this.http.get<Exercise[]>("http://localhost:8000/exerciseList");
     }
     else{

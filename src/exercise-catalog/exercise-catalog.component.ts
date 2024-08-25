@@ -32,7 +32,7 @@ export class ExerciseCatalogComponent implements OnDestroy{
   selection = new SelectionModel<Exercise>(true, []);
 
   constructor() {
-    this.getExercises(true);
+    this.getExercises();
 
     this.searchInput.pipe(
       debounceTime(this.debounceTimeMs)
@@ -60,8 +60,8 @@ export class ExerciseCatalogComponent implements OnDestroy{
     }
   }
 
-  getExercises(init:boolean=false){
-    let req = this.service.getExerciseList(init);
+  getExercises(){
+    let req = this.service.getExerciseList();
 
     // Request can either be an http request observable or the request may already be stored
     if(req instanceof Observable){
