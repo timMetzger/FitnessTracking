@@ -5,18 +5,24 @@
   <mat-grid-list cols="6" rowHeight="3:1">
     <mat-grid-tile [colspan]="1">
       <mat-form-field>
-        <input matInput type="text" placeholder="Workout Name" #workoutName>
+        <input matInput type="text" placeholder="Workout Name" [(ngModel)]="name">
       </mat-form-field>
     </mat-grid-tile>
 
 
     <mat-grid-tile [colspan]="1">
       <mat-form-field>
-        <input matInput type="text" placeholder="Created By" #createdBy>
+        <input matInput type="text" placeholder="Created By" [(ngModel)]="createdBy">
       </mat-form-field>
     </mat-grid-tile>
 
-    <mat-grid-tile [colspan]="4"></mat-grid-tile>
+    <mat-grid-tile [colspan]="1">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Type" [(ngModel)]="type">
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="3"></mat-grid-tile>
 
 
     <mat-grid-tile class="workout-row-header" style="border:solid 2px #000">Exercise</mat-grid-tile>
@@ -59,8 +65,8 @@
                (ngModelChange)="doFilter($event)"
                [(ngModel)]="warmup[exIdx].name">
         <mat-autocomplete #auto="matAutocomplete">
-          @for(ex of filteredOptions;track ex){
-            <mat-option [value]="ex.exercise" style="font-size:15px">{{ex.exercise}}</mat-option>
+          @for(ex of filteredOptions;track ex;let optionID = $index){
+            <mat-option #matOptionWarm [value]="ex.exercise" style="font-size:15px" (click)="hasSelectedWarmupEx(matOptionWarm.selected,exIdx,optionID+1)">{{ex.exercise}}</mat-option>
           }
         </mat-autocomplete>
         }
@@ -123,8 +129,8 @@
                  [(ngModel)]="supersets[i][exIdx].name"
                  (ngModelChange)="doFilter($event)">
           <mat-autocomplete #auto="matAutocomplete">
-            @for(ex of filteredOptions;track ex){
-            <mat-option [value]="ex.exercise" style="font-size:15px">{{ex.exercise}}</mat-option>
+            @for(ex of filteredOptions;track ex;let optionID = $index){
+            <mat-option #matOptionSuper [value]="ex.exercise" style="font-size:15px" (click)="hasSelectedSupersetEx(matOptionSuper.selected,i,exIdx,optionID+1)">{{ex.exercise}}</mat-option>
             }
           </mat-autocomplete>
           }
@@ -164,5 +170,5 @@
 <mat-dialog-actions>
   <button mat-raised-button (click)="addSuperset()">Add Superset</button>
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{warmup:warmup,supersets:supersets}">Save</button>
+  <button mat-button [mat-dialog-close]="{name:name,type:type,created_by:createdBy,warmup:warmup,supersets:supersets}">Save</button>
 </mat-dialog-actions>

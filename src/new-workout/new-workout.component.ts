@@ -14,26 +14,20 @@ import {MatGridList, MatGridTile} from "@angular/material/grid-list";
 import {MatFormField, MatHint, MatLabel, MatFormFieldModule} from "@angular/material/form-field";
 import {MatAutocomplete, MatOption, MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
-import {Exercise} from "../exercise";
+import {Exercise, BasicEx} from "../exercise";
 import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {FitnessTracker} from "../services/fitness-tracker";
 import {Workout} from "../workout";
-import {catchError, Observable, retry, startWith, throwError} from "rxjs";
+import {catchError, debounceTime, Observable, retry, startWith, Subject, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatIcon} from "@angular/material/icon";
 import {map} from "rxjs/operators";
 import {AsyncPipe} from "@angular/common";
+import {ex} from "@fullcalendar/core/internal-common";
 
 
-export interface BasicEx{
-  name:string,
-  rest:string,
-  reps:string,
-  tempo:string,
-  sets:string,
-  special_notes:string,
-}
+
 
 
 /**
@@ -59,10 +53,10 @@ export class AddNewWorkoutButton {
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result) {
-        console.log(result);
-        //this.newWorkoutEvent.emit(true);
+        this.service.addWorkout(result);
+        this.newWorkoutEvent.emit(result);
       }
-      //#this.newWorkoutEvent.emit(false);
+      this.newWorkoutEvent.emit(false);
     })
   }
 
@@ -103,21 +97,18 @@ export class AddNewWorkoutButton {
 })
 export class NewWorkoutDialog{
   private service = inject(FitnessTracker);
-  public warmup: BasicEx[] = [{  name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}]
-  public supersets: BasicEx[][] = [[{  name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}]]
+  public name: string = "";
+  public createdBy: string = ""
+  public type:string = ""
+  public warmup: BasicEx[] = [{  name:"", id: -1, rest:"", reps:"", tempo:"", sets:"", special_notes:""}]
+  public supersets: BasicEx[][] = [[{  name:"", id: -1, rest:"", reps:"", tempo:"", sets:"", special_notes:""}]]
   public supersetCounts:number[] = [1];
   public warmupExCount:number = 1;
-  public myControl = new FormControl("");
   public exList: Exercise[] = [];
 
   public filteredOptions: Exercise[] = this.exList;
 
-  updateWarmup(e:string,idx:number){
-    this.warmup[idx].name = e;
-  }
-  updateSupersetEx(e:string,idx:number,set:number){
-    this.supersets[set][idx].name = e;
-  }
+
 
   doFilter(search:string){
     search = search + "";
@@ -133,9 +124,23 @@ export class NewWorkoutDialog{
     this.getExercises();
   }
 
-  addSuperset(){
-    this.supersetCounts.push(1);
-    this.supersets.push([{name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""}])
+  hasSelectedWarmupEx(selected:boolean,exIdx:number,optionID:number){
+    if(selected){
+      this.filteredOptions = this.exList;
+      this.warmup[exIdx].id = optionID;
+    }
+  }
+  hasSelectedSupersetEx(selected:boolean,superset:number,exIdx:number,optionID:number){
+    if(selected){
+      this.filteredOptions = this.exList;
+      this.supersets[superset][exIdx].id = optionID;
+    }
+  }
+  updateWarmup(e:string,idx:number){
+    this.warmup[idx].name = e;
+  }
+  updateSupersetEx(e:string,idx:number,set:number){
+    this.supersets[set][idx].name = e;
   }
 
   removeSuperset(){
@@ -146,7 +151,7 @@ export class NewWorkoutDialog{
   }
 
   addEx(i:number){
-    this.supersets[i].push({name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""})
+    this.supersets[i].push({  name:"", id: -1, rest:"", reps:"", tempo:"", sets:"", special_notes:""})
     this.supersetCounts[i]++;
   }
   removeEx(i:number){
@@ -159,8 +164,13 @@ export class NewWorkoutDialog{
 
   }
 
+  addSuperset(){
+    this.supersetCounts.push(1);
+    this.supersets.push([{  name:"", id: -1, rest:"", reps:"", tempo:"", sets:"", special_notes:""}])
+  }
+
   addWarmupEx(){
-    this.warmup.push({name:"", rest:"", reps:"", tempo:"", sets:"", special_notes:""});
+    this.warmup.push({  name:"", id: -1, rest:"", reps:"", tempo:"", sets:"", special_notes:""});
     this.warmupExCount++;
   }
 

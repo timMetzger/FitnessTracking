@@ -7,7 +7,7 @@ import {SelectionModel} from "@angular/cdk/collections";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatButton} from "@angular/material/button";
 import {Category, MuscleGroup} from "../exercise-enums";
-import {catchError, debounceTime, map, Observable, retry, Subject, throwError} from "rxjs";
+import {catchError, debounceTime, delay, delayWhen, map, Observable, retry, Subject, throwError, timer} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatFormField, MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -31,18 +31,17 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 })
 export class WorkoutCatalogComponent implements OnDestroy{
   private searchInput = new Subject<string>();
-  private readonly debounceTimeMs = 250;
+  private readonly debounceTimeMs = 100;
   public expandedWorkout = null;
-  public supersetColor = "warmup-block";
 
   private service = inject(FitnessTracker)
-
+  private workoutList:Workout[] = []
   dataSource = new MatTableDataSource<Workout>([]);
   displayedColumns: string[] = ["name","type","last_completed","createdBy","createdOn"];
 
 
   constructor() {
-    this.getWorkouts(true);
+    this.getWorkouts();
 
     this.searchInput.pipe(
       debounceTime(this.debounceTimeMs)
@@ -64,14 +63,27 @@ export class WorkoutCatalogComponent implements OnDestroy{
   }
 
 
-  hasUpdated(result: boolean){
+  hasUpdated(result:any){
     if(result){
-      this.getWorkouts();
+      console.log(result);
+      this.service.addWorkout(result).pipe(
+        retry(3),
+        catchError(this.handleHttpError),
+      ).subscribe(
+        data => {
+          if(data){
+            this.workoutList.push(result)
+            this.dataSource.data = this.workoutList;
+            this.service.setWorkoutList(this.workoutList)
+          }
+        }
+      );
+
     }
   }
 
-  getWorkouts(init:boolean=false){
-    let req = this.service.getWorkoutList(init);
+  getWorkouts(){
+    let req = this.service.getWorkoutList();
 
     // Request can either be an http request observable or the request may already be stored
     if(req instanceof Observable){
@@ -80,10 +92,10 @@ export class WorkoutCatalogComponent implements OnDestroy{
         catchError(this.handleHttpError),
       ).subscribe(
         data => {
-          this.dataSource.data = data;
-          console.log(data);
-          this.service.setWorkoutList(data)
-
+          this.workoutList = data
+          this.dataSource.data = this.workoutList;
+          this.service.setWorkoutList(this.workoutList)
+          console.log(this.workoutList)
         },
         error => console.log(error),
       );
@@ -94,29 +106,10 @@ export class WorkoutCatalogComponent implements OnDestroy{
 
   }
 
-  public setColor(s:string){
-    if(s == "WARMUP" || s == "END WARMUP"){
-      this.supersetColor = "#fd934d";
-    }
-    else{
-      this.supersetColor = "#ffb888";
-    }
+  public goToExercise(id:number){
+    console.log("GO TO ",id);
   }
 
-  // TODO: if user clicked on a exercise name take them to the exercise page
-  public highlight(clicked:string){
-    console.log(clicked);
-    if(clicked){
-      if(this.expandedWorkout){
-        let workout: Workout = this.expandedWorkout as Workout;
-        let idx = workout.exercise_names.indexOf(clicked.trim());
-      }
-    }
-  }
-
-  public displayWorkout(workout:Workout) {
-    return this.service.workoutIterativeForm(workout);
-  }
 
   private handleHttpError(error: HttpErrorResponse){
     if (error.status === 0){

@@ -4,6 +4,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 import db_helper
+from pydantic import BaseModel
+
+class ExercisePrescription(BaseModel):
+  id:int
+  name:str
+  reps:str
+  rest:str
+  sets:str
+  tempo:str
+  special_notes:str
+class Workout(BaseModel):
+  name:str
+  type:str
+  created_by:str
+  warmup:list[ExercisePrescription]
+  supersets:list[list[ExercisePrescription]]
+
+
+
 
 app = FastAPI()
 
@@ -31,6 +50,10 @@ async def workoutList():
 @app.get("/exerciseById/{id}")
 async def exByID(id: int):
     return db_helper.get_exercise_by_id(id)
+
+@app.post("/addWorkout/")
+async def addWorkout(workoutObject: Workout):
+  return db_helper.add_workout(jsonable_encoder(workoutObject))
 
 
 if __name__ == "__main__":

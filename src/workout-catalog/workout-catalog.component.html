@@ -56,19 +56,35 @@
           <mat-grid-tile class="workout-row-header">Sets</mat-grid-tile>
           <mat-grid-tile class="workout-row-header">Special Notes</mat-grid-tile>
 
-          @for(display of displayWorkout(element);track $index){
-            @if(display == "WARMUP" || display == "END WARMUP" || display == "SUPERSET" || display == "END SUPERSET"){
-                <hr>
-                {{setColor(display)}}
-              }
-            @else{
-                <mat-grid-tile [style.background]="supersetColor" class="superset" (click)="highlight($any($event.target).textContent)"> {{display}} </mat-grid-tile>
-              }
-
+          @for(ex of element.warmup;track ex.id;let i = $index){
+              <mat-grid-tile class="warmup" (click)="goToExercise(ex.id)">{{ex.name}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.rest}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.reps}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.tempo}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.sets}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.special_notes}}</mat-grid-tile>
 
           }
 
         </mat-grid-list>
+        <hr>
+
+
+
+          @for(superset of element.supersets;track $index){
+            <mat-grid-list cols="6" rowHeight="3:1">
+            @for(ex of superset;track ex.id;let i = $index){
+                <mat-grid-tile class="superset" (click)="goToExercise(ex.id)">{{ex.name}}</mat-grid-tile>
+                <mat-grid-tile class="superset">{{ex.rest}}</mat-grid-tile>
+                <mat-grid-tile class="superset">{{ex.reps}}</mat-grid-tile>
+                <mat-grid-tile class="superset">{{ex.tempo}}</mat-grid-tile>
+                <mat-grid-tile class="superset">{{ex.sets}}</mat-grid-tile>
+                <mat-grid-tile class="superset">{{ex.special_notes}}</mat-grid-tile>
+            }
+            </mat-grid-list>
+          <hr>
+        }
+
 
 
 

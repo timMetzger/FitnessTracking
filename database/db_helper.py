@@ -13,6 +13,8 @@
 #     return {"message": f"Hello {name}"}
 import psycopg2
 import csv
+import json
+
 
 DB_NAME = "FitnessDB"
 DB_USER = "db_helper"
@@ -52,6 +54,7 @@ def get_workout_catalog():
     conn.commit()
     conn.close()
 
+    print(results[0][0])
     return results[0][0]
 
   else:
@@ -88,6 +91,18 @@ def get_exercise_by_id(id:int):
 
   else:
     return False
+
+def add_workout(workoutObject):
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = f"""INSERT INTO public.workouts VALUES (DEFAULT,'{workoutObject["name"]}','{workoutObject["type"]}','{workoutObject["created_by"]}',CURRENT_DATE,NULL,'{json.dumps(workoutObject["warmup"])}','{json.dumps(workoutObject["supersets"])}')"""
+
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+    return True
 
 def load_table():
   try:

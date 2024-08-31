@@ -20,5 +20,14 @@ export interface Exercise {
   classification?:string;
 }
 
+export interface BasicEx{
+  name:string,
+  id: number,
+  rest:string,
+  reps:string,
+  tempo:string,
+  sets:string,
+  special_notes:string,
+}
 
 
