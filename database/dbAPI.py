@@ -51,6 +51,10 @@ async def workoutList():
 async def exByID(id: int):
     return db_helper.get_exercise_by_id(id)
 
+@app.get("/workoutById/{id}")
+async def exByID(id: int):
+    return db_helper.get_workout_by_id(id)
+
 @app.post("/addWorkout/")
 async def addWorkout(workoutObject: Workout):
   return db_helper.add_workout(jsonable_encoder(workoutObject))

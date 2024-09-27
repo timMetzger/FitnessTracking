@@ -12,6 +12,7 @@ import {FullCalendarComponent, FullCalendarModule} from "@fullcalendar/angular";
 import {CalendarOptions, DateSpanApi} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction"
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-dashboard',
@@ -36,6 +37,8 @@ export class DashboardComponent implements AfterViewInit{
   @ViewChild('calendar') calendarComponent !: FullCalendarComponent
   private calendarAPI: any;
 
+  constructor(private router: Router) {}
+
   ngAfterViewInit(){
     this.calendarAPI = this.calendarComponent.getApi();
   }
@@ -50,12 +53,20 @@ export class DashboardComponent implements AfterViewInit{
     editable:true,
     firstDay:1,
     events: [
-      { title: 'event 1', date: '2024-08-01' },
-      { title: 'event 2', date: '2024-08-17' }
-    ]
+      { title: 'event 1', date: '2024-09-01', id: "1"},
+      { title: 'event 2', date: '2024-09-17', id: "2"}
+    ],
+    eventClick: (arg) => this.handleEventClick(arg)
   };
 
   handleDateClick(arg:any){
+  }
+
+  handleEventClick(info:any){
+    info.jsEvent.preventDefault();
+    alert("Workout: " + info.event.title);//TODO: this needs to be a dialog populated with the workout at a glance
+
+    this.router.navigate(['/session-recorder',info.event.id]);
   }
 
   restrictSelection(e: DateSpanApi){

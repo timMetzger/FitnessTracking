@@ -92,6 +92,21 @@ def get_exercise_by_id(id:int):
   else:
     return False
 
+def get_workout_by_id(id:int):
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = f'''SELECT row_to_json(t) FROM (SELECT * FROM public.workouts WHERE id={id}) t'''
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    return results[0][0]
+
+  else:
+    return False
 def add_workout(workoutObject):
   conn = establish_connection()
   if conn is not None:

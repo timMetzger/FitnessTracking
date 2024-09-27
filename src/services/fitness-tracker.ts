@@ -72,6 +72,10 @@ export class FitnessTracker {
 
   }
 
+  public getWorkoutById(id:number){
+    return this.http.get<Workout>(`http://localhost:8000/workoutById/${id}`)
+  }
+
   private handleHttpError(error: HttpErrorResponse){
     if (error.status === 0){
       console.error("An error occured:",error.error);
