@@ -4,6 +4,8 @@ import { MuscleGroup, Category } from "../exercise-enums";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, map, Observable, retry, throwError} from "rxjs";
 import {Workout} from "../workout";
+import {Session} from "../session";
+import {WorkoutEvents} from "../workoutEvent";
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +67,6 @@ export class FitnessTracker {
 
   public addWorkout(newWorkout:Workout){
     return this.http.post<Workout>("http://localhost:8000/addWorkout",newWorkout)
-
   }
 
   public removeExercise(id:number){
@@ -74,6 +75,18 @@ export class FitnessTracker {
 
   public getWorkoutById(id:number){
     return this.http.get<Workout>(`http://localhost:8000/workoutById/${id}`)
+  }
+
+  public getSessionById(id:number){
+    return this.http.get<Session>(`http://localhost:8000/sessionById/${id}`)
+  }
+
+  public saveSession(session:Session){
+    return this.http.post<Session>("http://localhost:8000/updateSession",session)
+  }
+
+  public getScheduledEvents(){
+    return this.http.get<WorkoutEvents>(`http://localhost:8000/getScheduledEvents`)
   }
 
   private handleHttpError(error: HttpErrorResponse){

@@ -1,5 +1,5 @@
 export interface WorkoutResults{
-  results:[SetEntry[]]
+  results:SetEntry[]
 }
 
 export interface SetEntry{

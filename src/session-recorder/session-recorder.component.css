@@ -15,7 +15,7 @@
 
 .superset{
   font-size: 15px;
-  background: #ffb888;
+  background: #fd934d;
 }
 .warmup{
   font-size: 15px;
@@ -25,3 +25,12 @@ hr {
   clear: both;
   visibility: hidden;
 }
+.input-field{
+}
+mat-form-field{
+  width:95%;
+  height:80%;
+  align-content: center;
+  padding-top:30px
+}
+

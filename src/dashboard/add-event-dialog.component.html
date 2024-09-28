@@ -1,0 +1,23 @@
+
+<mat-dialog-content>
+  <h1>Schedule Workout</h1>
+  <div style="display:flex">
+  <input type="text"
+         placeholder="Workout"
+         aria-label="Workout"
+         matInput
+         [matAutocomplete]="auto"
+         (ngModelChange)="doFilter($event)"
+         [(ngModel)]="this.workoutId">
+  <mat-autocomplete #auto="matAutocomplete">
+    @for(wk of filteredOptions;track wk){
+    <mat-option>{{wk.name}}</mat-option>
+    }
+  </mat-autocomplete>
+  </div>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="this.workoutId">Add Event</button>
+  </mat-dialog-actions>
+</mat-dialog-content>

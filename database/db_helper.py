@@ -119,6 +119,46 @@ def add_workout(workoutObject):
 
     return True
 
+def update_sesion(sessionObject):
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = f"""UPSERT public.sessions SET ('{sessionObject["id"]}',CURRENT_DATE,'{sessionObject["workout_id"]}','{json.dumps(sessionObject["workout_results"])}')"""
+
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+    return True
+
+def get_scheduled_events():
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = '''SELECT json_agg(t) FROM (SELECT * FROM public.workout_events) t'''
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    return results[0][0]
+
+  else:
+    return False
+
+def add_scheduled_event(eventObject):
+  conn = establish_connection()
+  if conn is not None:
+    cursor = conn.cursor()
+    sql = f"""INSERT INTO public.workout_events VALUES ('{json.dumps(eventObject)}')"""
+
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+    return True
+
 def load_table():
   try:
     conn = psycopg2.connect(database=DB_NAME,
