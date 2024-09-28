@@ -8,6 +8,6 @@ export const routes: Routes = [
   {path:"",component:DashboardComponent,title:"Fitness Dashboard"},
   {path:"workout-catalog",component:WorkoutCatalogComponent,title:"Workout Catalog"},
   {path:"exercise-catalog",component:ExerciseCatalogComponent,title:"Exercise Catalog"},
-  {path:"session-recorder/:id",component:SessionRecorderComponent,title:"Session Recorder"},
+  {path:"session-recorder/:sessionId/:workoutId",component:SessionRecorderComponent,title:"Session Recorder"},
 
 ];

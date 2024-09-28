@@ -1,7 +1,40 @@
-<p>Name: {{this.workout.name}}</p>
-<p>Type: {{this.workout.type}}</p>
-<p>Created By: {{this.workout.created_by}}</p>
-<p>Created On: {{this.workout.created_on}}</p>
-<p>Last Completed: {{this.workout.last_completed}}</p>
-<p>Warmup: {{this.workout.warmup}}</p>
-<p>Supersets: {{this.workout.supersets}}</p>
+<div style="padding:10px 15px 10px 10px">
+<h1>Name: {{this.workout.name}}</h1>
+<h3>Created By: {{this.workout.created_by}}</h3>
+
+<mat-grid-list cols="6" rowHeight="3:1">
+
+  <mat-grid-tile class="workout-row-header">Exercise</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header">Rest</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header">Reps</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header">Tempo</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header">Sets</mat-grid-tile>
+  <mat-grid-tile class="workout-row-header">Special Notes</mat-grid-tile>
+  <hr>
+  @for(ex of this.workout.warmup;track ex.id;let i = $index){
+  <mat-grid-tile class="warmup">{{ex.name}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.rest}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.reps}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.tempo}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.sets}}</mat-grid-tile>
+              <mat-grid-tile class="warmup">{{ex.special_notes}}</mat-grid-tile>
+
+  }
+
+</mat-grid-list>
+<hr>
+
+@for(superset of this.workout.supersets;track $index){
+<mat-grid-list cols="6" rowHeight="3:1">
+@for(ex of superset;track ex.id;let i = $index){
+<mat-grid-tile class="superset">{{ex.name}}</mat-grid-tile>
+<mat-grid-tile class="superset">{{ex.rest}}</mat-grid-tile>
+<mat-grid-tile class="superset">{{ex.reps}}</mat-grid-tile>
+<mat-grid-tile class="superset">{{ex.tempo}}</mat-grid-tile>
+<mat-grid-tile class="superset">{{ex.sets}}</mat-grid-tile>
+<mat-grid-tile class="superset">{{ex.special_notes}}</mat-grid-tile>
+}
+</mat-grid-list>
+<hr>
+}
+</div>

@@ -1,18 +1,27 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
+import {AfterViewInit, ChangeDetectionStrategy, Component, inject, Inject, ViewChild} from '@angular/core';
 import {AsyncPipe, CommonModule} from '@angular/common';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import {RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
+import {MatGridList, MatGridListModule, MatGridTile} from '@angular/material/grid-list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {FullCalendarComponent, FullCalendarModule} from "@fullcalendar/angular";
 import {CalendarOptions, DateSpanApi} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction"
-import { Router } from "@angular/router";
+import {
+  MAT_DIALOG_DATA, MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle
+} from "@angular/material/dialog";
+import {FitnessTracker} from "../services/fitness-tracker";
+import {Workout} from "../workout";
+import {NewExerciseDialog} from "../new-exercise/new-exercise.component";
+import {catchError, Observable, retry, throwError} from "rxjs";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-dashboard',
@@ -37,7 +46,7 @@ export class DashboardComponent implements AfterViewInit{
   @ViewChild('calendar') calendarComponent !: FullCalendarComponent
   private calendarAPI: any;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,public dialog: MatDialog,private service: FitnessTracker) {}
 
   ngAfterViewInit(){
     this.calendarAPI = this.calendarComponent.getApi();
@@ -53,8 +62,8 @@ export class DashboardComponent implements AfterViewInit{
     editable:true,
     firstDay:1,
     events: [
-      { title: 'event 1', date: '2024-09-01', id: "1"},
-      { title: 'event 2', date: '2024-09-17', id: "2"}
+      { title: 'event 1', date: '2024-09-01', id: "1",extendedProps:{workoutId:"1"}},
+      { title: 'event 2', date: '2024-09-17', id: "2",extendedProps:{workoutId:"2"}}
     ],
     eventClick: (arg) => this.handleEventClick(arg)
   };
@@ -64,9 +73,30 @@ export class DashboardComponent implements AfterViewInit{
 
   handleEventClick(info:any){
     info.jsEvent.preventDefault();
-    alert("Workout: " + info.event.title);//TODO: this needs to be a dialog populated with the workout at a glance
 
-    this.router.navigate(['/session-recorder',info.event.id]);
+    let req = this.service.getWorkoutById(info.event.extendedProps.workoutId);
+    if(req instanceof Observable){
+      req.pipe(
+        retry(3),
+        catchError(this.handleHttpError),
+      ).subscribe(
+        data => {
+          const dialogRef = this.dialog.open(CalendarEventDialog,{
+            width:'75%',
+            height:'75%',
+            data:data});
+          dialogRef.afterClosed().subscribe(result => {
+            if(result) {
+              console.log(result);
+              this.router.navigate(['/session-recorder',info.event.id,info.event.extendedProps.workoutId]);
+            }
+          })
+        },
+        error => console.log(error),
+      );
+    }
+
+
   }
 
   restrictSelection(e: DateSpanApi){
@@ -76,5 +106,44 @@ export class DashboardComponent implements AfterViewInit{
     return false;
   }
 
+  private handleHttpError(error: HttpErrorResponse){
+    if (error.status === 0){
+      console.error("An error occured:",error.error);
+    }
+    else{
+      console.error('Backend returned code ${error.status}, body was: ',error.error);
+    }
+
+    return throwError(() => new Error("Something bad happend; please try again later"));
+  }
 
 }
+@Component({
+  selector: 'calendar_event_dialog',
+  styleUrl: 'calendar-event-dialog.component.css',
+  templateUrl: 'calendar-event-dialog.component.html',
+  standalone:true,
+  imports:[
+    MatButtonModule,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogTitle,
+    MatDialogContent,
+    MatGridList,
+    MatGridTile,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CalendarEventDialog{
+  public workout:Workout;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any){
+    console.log(data);
+    this.workout = data;
+  }
+
+
+
+
+
+}
+
